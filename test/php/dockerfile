@@ -1,0 +1,21 @@
+# FROM php:7.3-apache
+FROM php:5.6
+COPY conf/php.ini /usr/local/etc/php/conf.d/
+
+FROM httpd
+
+#wordpress module
+RUN apt-get update \
+    && apt-get install -y libicu-dev libzip-dev zlib1g-dev unzip vim imagemagick libmagickwand-dev \
+    && docker-php-ext-install mysqli intl zip exif \
+    && apt-get install -y wget git unzip libpq-dev libfreetype6-dev libjpeg62-turbo-dev libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd \
+    # && apt-get install -y imagemagick libmagickwand-dev \
+    && pecl install imagick \
+    && docker-php-ext-enable imagick
+
+
+
+#module enable
+RUN a2enmod rewrite
